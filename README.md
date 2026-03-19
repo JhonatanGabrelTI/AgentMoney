@@ -170,11 +170,11 @@ SUNO_API_KEY=sua-key
 UDIO_API_KEY=sua-key
 ```
 
-#### Imagem IA (Opcional)
+#### Imagem IA (Thumbnails)
 ```env
-MIDJOURNEY_API_KEY=sua-key
-# ou
-DALL_E_API_KEY=sua-key
+# RECOMENDADO: Usar DALL-E 3 (ja incluso na OpenAI!)
+# Alternativas: Stability AI, Leonardo.ai
+STABILITY_API_KEY=sua-key
 ```
 
 ---
@@ -237,7 +237,7 @@ DALL_E_API_KEY=sua-key
 ```
 1. Research → Analisa nichos e tendências
 2. Audio → Gera música com Suno/Udio
-3. Thumbnail → Cria imagem com Midjourney/DALL-E
+3. Thumbnail → Cria imagem com DALL-E 3 (OpenAI)
 4. Video → Monta com ffmpeg
 5. Upload → Publica em TODAS as plataformas configuradas
 ```

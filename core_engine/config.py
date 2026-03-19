@@ -36,9 +36,10 @@ class Config:
     SUNO_API_KEY = os.getenv("SUNO_API_KEY", "demo-key")
     UDIO_API_KEY = os.getenv("UDIO_API_KEY", "demo-key")
     
-    # Imagem IA
-    MIDJOURNEY_API_KEY = os.getenv("MIDJOURNEY_API_KEY", "demo-key")
-    DALL_E_API_KEY = os.getenv("DALL_E_API_KEY", "demo-key")
+    # Imagem IA (Thumbnails)
+    # NOTA: Midjourney NAO tem API publica
+    # Usamos DALL-E 3 (via OPENAI_API_KEY) ou Stability AI
+    STABILITY_API_KEY = os.getenv("STABILITY_API_KEY", "")
     
     # YouTube
     YOUTUBE_CLIENT_ID = os.getenv("YOUTUBE_CLIENT_ID", "")
