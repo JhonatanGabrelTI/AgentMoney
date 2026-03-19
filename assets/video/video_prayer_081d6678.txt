@@ -1,0 +1,5 @@
+[MOCK VIDEO]
+Audio: C:\Users\Micro\Desktop\agentmoney\assets\audio\audio_prayer_5223f4ce.txt
+Thumbnail: C:\Users\Micro\Desktop\agentmoney\assets\thumbnails\thumb_prayer_34772154.txt
+Niche: Orações e Momento com Deus
+Generated: 2026-03-19T14:11:07.802213
