@@ -40,7 +40,7 @@ class Product:
 
 @dataclass
 class Video:
-    """Modelo de vídeo YouTube."""
+    """Modelo de vídeo multi-plataforma."""
     id: str
     title: str
     description: str
@@ -49,14 +49,48 @@ class Video:
     audio_path: str
     thumbnail_path: str
     video_path: Optional[str]
-    youtube_id: Optional[str]
-    status: str  # pending, processing, uploaded, published, error
+    # IDs por plataforma
+    youtube_id: Optional[str] = None
+    tiktok_id: Optional[str] = None
+    instagram_id: Optional[str] = None
+    facebook_id: Optional[str] = None
+    kwai_id: Optional[str] = None
+    # Status por plataforma
+    status: str = "pending"  # pending, processing, uploaded, published, error
+    youtube_status: str = "pending"
+    tiktok_status: str = "pending"
+    instagram_status: str = "pending"
+    facebook_status: str = "pending"
+    kwai_status: str = "pending"
+    # URLs
+    youtube_url: Optional[str] = None
+    tiktok_url: Optional[str] = None
+    instagram_url: Optional[str] = None
+    facebook_url: Optional[str] = None
+    kwai_url: Optional[str] = None
+    # Timestamps
     created_at: str = None
     uploaded_at: Optional[str] = None
     
     def __post_init__(self):
         if self.created_at is None:
             self.created_at = datetime.now().isoformat()
+    
+    def get_platform_status(self, platform: str) -> str:
+        """Retorna status de uma plataforma específica."""
+        return getattr(self, f"{platform}_status", "unknown")
+    
+    def get_platform_id(self, platform: str) -> Optional[str]:
+        """Retorna ID de uma plataforma específica."""
+        return getattr(self, f"{platform}_id", None)
+    
+    def set_platform_result(self, platform: str, video_id: str, 
+                           status: str = "published", url: str = None):
+        """Define resultado de upload para uma plataforma."""
+        setattr(self, f"{platform}_id", video_id)
+        setattr(self, f"{platform}_status", status)
+        if url:
+            setattr(self, f"{platform}_url", url)
 
 
 class Database:
@@ -99,7 +133,7 @@ class Database:
                 )
             """)
             
-            # Tabela de vídeos
+            # Tabela de vídeos (multi-plataforma)
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS videos (
                     id TEXT PRIMARY KEY,
@@ -110,8 +144,26 @@ class Database:
                     audio_path TEXT,
                     thumbnail_path TEXT,
                     video_path TEXT,
+                    -- IDs por plataforma
                     youtube_id TEXT,
+                    tiktok_id TEXT,
+                    instagram_id TEXT,
+                    facebook_id TEXT,
+                    kwai_id TEXT,
+                    -- Status por plataforma
                     status TEXT DEFAULT 'pending',
+                    youtube_status TEXT DEFAULT 'pending',
+                    tiktok_status TEXT DEFAULT 'pending',
+                    instagram_status TEXT DEFAULT 'pending',
+                    facebook_status TEXT DEFAULT 'pending',
+                    kwai_status TEXT DEFAULT 'pending',
+                    -- URLs
+                    youtube_url TEXT,
+                    tiktok_url TEXT,
+                    instagram_url TEXT,
+                    facebook_url TEXT,
+                    kwai_url TEXT,
+                    -- Timestamps
                     created_at TEXT,
                     uploaded_at TEXT
                 )
@@ -208,20 +260,30 @@ class Database:
     # ==================== VÍDEOS ====================
     
     def save_video(self, video: Video) -> bool:
-        """Salva ou atualiza um vídeo."""
+        """Salva ou atualiza um vídeo multi-plataforma."""
         try:
             with self._get_connection() as conn:
                 conn.execute("""
                     INSERT OR REPLACE INTO videos 
                     (id, title, description, tags, category, audio_path,
-                     thumbnail_path, video_path, youtube_id, status,
+                     thumbnail_path, video_path, 
+                     youtube_id, tiktok_id, instagram_id, facebook_id, kwai_id,
+                     status, youtube_status, tiktok_status, instagram_status, 
+                     facebook_status, kwai_status,
+                     youtube_url, tiktok_url, instagram_url, facebook_url, kwai_url,
                      created_at, uploaded_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     video.id, video.title, video.description,
                     json.dumps(video.tags), video.category, video.audio_path,
-                    video.thumbnail_path, video.video_path, video.youtube_id,
-                    video.status, video.created_at, video.uploaded_at
+                    video.thumbnail_path, video.video_path,
+                    video.youtube_id, video.tiktok_id, video.instagram_id,
+                    video.facebook_id, video.kwai_id,
+                    video.status, video.youtube_status, video.tiktok_status,
+                    video.instagram_status, video.facebook_status, video.kwai_status,
+                    video.youtube_url, video.tiktok_url, video.instagram_url,
+                    video.facebook_url, video.kwai_url,
+                    video.created_at, video.uploaded_at
                 ))
                 conn.commit()
             return True
@@ -254,15 +316,38 @@ class Database:
         return videos
     
     def update_video_status(self, video_id: str, status: str, 
-                           youtube_id: Optional[str] = None):
-        """Atualiza status do vídeo."""
+                           platform_video_id: Optional[str] = None,
+                           platform: str = "youtube"):
+        """Atualiza status do vídeo global ou por plataforma."""
         uploaded_at = datetime.now().isoformat() if status == "published" else None
         
         with self._get_connection() as conn:
+            if platform_video_id:
+                # Atualiza status específico da plataforma
+                conn.execute(
+                    f"""UPDATE videos SET 
+                        {platform}_id = ?, {platform}_status = ?, uploaded_at = ?
+                        WHERE id = ?""",
+                    (platform_video_id, status, uploaded_at, video_id)
+                )
+            else:
+                # Atualiza status global
+                conn.execute(
+                    "UPDATE videos SET status = ?, uploaded_at = ? WHERE id = ?",
+                    (status, uploaded_at, video_id)
+                )
+            conn.commit()
+    
+    def update_platform_result(self, video_id: str, platform: str,
+                               platform_video_id: str, status: str,
+                               url: Optional[str] = None):
+        """Atualiza resultado de upload para uma plataforma específica."""
+        with self._get_connection() as conn:
             conn.execute(
-                """UPDATE videos SET status = ?, youtube_id = ?, uploaded_at = ?
-                   WHERE id = ?""",
-                (status, youtube_id, uploaded_at, video_id)
+                f"""UPDATE videos SET 
+                    {platform}_id = ?, {platform}_status = ?, {platform}_url = ?
+                    WHERE id = ?""",
+                (platform_video_id, status, url, video_id)
             )
             conn.commit()
     

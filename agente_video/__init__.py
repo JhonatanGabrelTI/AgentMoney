@@ -1,20 +1,18 @@
 """
-AgentMoney - Agente YouTube Music IA
-Automação de canais faceless com música e vídeos.
+AgentMoney - Agente Video Multi-Plataforma
+Automação de canais faceless em YouTube, TikTok, Instagram, Facebook e Kwai.
 """
 
-from .agent import YouTubeAgent
+from .agent import VideoAgent
 from .research import NicheResearcher
 from .audio import AudioGenerator
 from .thumbnail import ThumbnailGenerator
 from .video import VideoAssembler
-from .uploader import YouTubeUploader
 
 __all__ = [
-    "YouTubeAgent", 
+    "VideoAgent", 
     "NicheResearcher", 
     "AudioGenerator",
     "ThumbnailGenerator",
-    "VideoAssembler",
-    "YouTubeUploader"
+    "VideoAssembler"
 ]

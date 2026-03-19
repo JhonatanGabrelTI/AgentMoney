@@ -46,6 +46,27 @@ class Config:
     YOUTUBE_REFRESH_TOKEN = os.getenv("YOUTUBE_REFRESH_TOKEN", "")
     YOUTUBE_CHANNEL_ID = os.getenv("YOUTUBE_CHANNEL_ID", "")
     
+    # TikTok
+    TIKTOK_ACCESS_TOKEN = os.getenv("TIKTOK_ACCESS_TOKEN", "")
+    TIKTOK_OPEN_ID = os.getenv("TIKTOK_OPEN_ID", "")
+    
+    # Instagram
+    INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN", "")
+    INSTAGRAM_ACCOUNT_ID = os.getenv("INSTAGRAM_ACCOUNT_ID", "")
+    INSTAGRAM_APP_ID = os.getenv("INSTAGRAM_APP_ID", "")
+    INSTAGRAM_APP_SECRET = os.getenv("INSTAGRAM_APP_SECRET", "")
+    
+    # Facebook
+    FACEBOOK_ACCESS_TOKEN = os.getenv("FACEBOOK_ACCESS_TOKEN", "")
+    FACEBOOK_PAGE_ID = os.getenv("FACEBOOK_PAGE_ID", "")
+    FACEBOOK_APP_ID = os.getenv("FACEBOOK_APP_ID", "")
+    FACEBOOK_APP_SECRET = os.getenv("FACEBOOK_APP_SECRET", "")
+    
+    # Kwai
+    KWAI_ACCESS_TOKEN = os.getenv("KWAI_ACCESS_TOKEN", "")
+    KWAI_APP_ID = os.getenv("KWAI_APP_ID", "")
+    KWAI_APP_SECRET = os.getenv("KWAI_APP_SECRET", "")
+    
     # Shopee
     SHOPEE_AFFILIATE_ID = os.getenv("SHOPEE_AFFILIATE_ID", "")
     SHOPEE_AFFILIATE_TOKEN = os.getenv("SHOPEE_AFFILIATE_TOKEN", "")

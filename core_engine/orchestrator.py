@@ -96,69 +96,74 @@ class AgentMoneyOrchestrator:
             self.db.log_execution("shopee", "pipeline", "error", str(e))
             return False
     
+    def _get_video_platforms(self) -> list:
+        """Detecta plataformas de vídeo configuradas."""
+        platforms = []
+        if self.config.YOUTUBE_CLIENT_ID:
+            platforms.append("youtube")
+        if self.config.TIKTOK_ACCESS_TOKEN:
+            platforms.append("tiktok")
+        if self.config.INSTAGRAM_ACCESS_TOKEN:
+            platforms.append("instagram")
+        if self.config.FACEBOOK_ACCESS_TOKEN:
+            platforms.append("facebook")
+        if self.config.KWAI_ACCESS_TOKEN:
+            platforms.append("kwai")
+        
+        # Se modo DEMO e nenhuma configurada, usa todas
+        if self.config.IS_DEMO and not platforms:
+            platforms = ["youtube", "tiktok", "instagram", "facebook", "kwai"]
+        
+        return platforms
+    
     def run_youtube_pipeline(self):
-        """Executa pipeline completo do agente YouTube."""
-        logger.info("🎬 Iniciando pipeline YouTube...")
+        """Executa pipeline completo do agente Video multi-plataforma."""
+        logger.info("Iniciando pipeline Video Multi-Plataforma...")
         
         try:
-            from agente_youtube.agent import YouTubeAgent
+            from agente_video.agent import VideoAgent
             
-            if "youtube" not in self.agents:
-                self.agents["youtube"] = YouTubeAgent()
+            if "video" not in self.agents:
+                # Detecta plataformas configuradas
+                platforms = self._get_video_platforms()
+                self.agents["video"] = VideoAgent(platforms)
             
-            agent = self.agents["youtube"]
+            agent = self.agents["video"]
             
-            # Etapa 1: Pesquisa de nicho
-            logger.info("🔍 Etapa 1/5: Pesquisando nichos...")
-            niche = agent.research_niche()
-            logger.info(f"✅ Nicho selecionado: {niche['name']}")
+            # Executa pipeline completo
+            logger.info("Iniciando pipeline multi-plataforma...")
+            result = agent.run_pipeline(content_type="long")
             
-            # Etapa 2: Produção de áudio
-            logger.info("🎵 Etapa 2/5: Produzindo áudio...")
-            audio_path = agent.generate_audio(niche)
-            logger.info(f"✅ Áudio gerado: {audio_path}")
-            
-            # Etapa 3: Geração de thumbnail
-            logger.info("🖼️ Etapa 3/5: Criando thumbnail...")
-            thumbnail_path = agent.generate_thumbnail(niche)
-            logger.info(f"✅ Thumbnail criada: {thumbnail_path}")
-            
-            # Etapa 4: Montagem do vídeo
-            logger.info("🎥 Etapa 4/5: Montando vídeo...")
-            video_path = agent.assemble_video(audio_path, thumbnail_path, niche)
-            logger.info(f"✅ Vídeo montado: {video_path}")
-            
-            # Etapa 5: Upload (simulado em demo)
-            logger.info("📤 Etapa 5/5: Fazendo upload...")
-            video_id = agent.upload_video(video_path, niche)
-            logger.info(f"✅ Vídeo publicado (ID: {video_id})")
+            upload_results = result['upload_results']
+            logger.info(f"Uploads: {upload_results['success_count']} sucesso, {upload_results['failed_count']} falhas")
             
             # Log
-            self.db.log_execution("youtube", "pipeline", "success", 
-                                 f"Vídeo {video_id} publicado em {niche['name']}")
+            platforms_str = ", ".join(upload_results['results'].keys())
+            self.db.log_execution("video", "pipeline", "success" if upload_results['success_count'] > 0 else "partial", 
+                                 f"Video publicado em: {platforms_str}")
             
             return True
             
         except Exception as e:
-            logger.error(f"❌ Erro no pipeline YouTube: {e}")
-            self.db.log_execution("youtube", "pipeline", "error", str(e))
+            logger.error(f"Erro no pipeline Video: {e}")
+            self.db.log_execution("video", "pipeline", "error", str(e))
             return False
     
     def run_once(self):
         """Executa uma rodada manual de todos os pipelines."""
         logger.info("=" * 60)
-        logger.info("🚀 EXECUÇÃO MANUAL INICIADA")
+        logger.info("EXECUCAO MANUAL INICIADA")
         logger.info("=" * 60)
         
         results = {
             "shopee": self.run_shopee_pipeline(),
-            "youtube": self.run_youtube_pipeline()
+            "video": self.run_youtube_pipeline()
         }
         
         logger.info("=" * 60)
-        logger.info("📊 RESULTADOS:")
+        logger.info("RESULTADOS:")
         for agent, success in results.items():
-            status = "✅ SUCESSO" if success else "❌ FALHA"
+            status = "SUCESSO" if success else "FALHA"
             logger.info(f"  {agent.upper()}: {status}")
         logger.info("=" * 60)
         

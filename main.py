@@ -78,6 +78,10 @@ Database: {config.DATABASE_URL}"""
         ("OpenAI", "OK" if config.OPENAI_API_KEY != "demo-key" else "DEMO"),
         ("Suno", "OK" if config.SUNO_API_KEY != "demo-key" else "DEMO"),
         ("YouTube", "OK" if config.YOUTUBE_CLIENT_ID else "OFF"),
+        ("TikTok", "OK" if config.TIKTOK_ACCESS_TOKEN else "OFF"),
+        ("Instagram", "OK" if config.INSTAGRAM_ACCESS_TOKEN else "OFF"),
+        ("Facebook", "OK" if config.FACEBOOK_ACCESS_TOKEN else "OFF"),
+        ("Kwai", "OK" if config.KWAI_ACCESS_TOKEN else "OFF"),
         ("Shopee", "OK" if config.SHOPEE_AFFILIATE_ID else "OFF"),
     ]
     

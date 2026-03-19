@@ -1,0 +1,5 @@
+[MOCK VIDEO]
+Audio: C:\Users\Micro\Desktop\agentmoney\assets\audio\audio_meditation_0f2a959c.txt
+Thumbnail: C:\Users\Micro\Desktop\agentmoney\assets\thumbnails\thumb_meditation_d0300a7e.txt
+Niche: Meditação e Relaxamento
+Generated: 2026-03-19T14:38:15.759728

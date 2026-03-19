@@ -13,7 +13,12 @@
 O **AgentMoney** é um ecossistema de automação completo projetado para gerar renda passiva através de:
 
 1. **Agente Shopee** - Curadoria automatizada de produtos, geração de copy e distribuição social
-2. **Agente YouTube** - Produção automatizada de canais "faceless" (música, meditação, etc)
+2. **Agente Video** - Produção automatizada de canais "faceless" em múltiplas plataformas:
+   - YouTube (vídeos e Shorts)
+   - TikTok
+   - Instagram Reels
+   - Facebook
+   - Kwai
 
 ### Arquitetura
 
@@ -23,18 +28,25 @@ AgentMoney/
 │   ├── orchestrator.py   # Coordenação de agentes
 │   ├── config.py         # Configurações
 │   ├── database.py       # Persistência (SQLite/PostgreSQL)
-│   └── logger.py         # Logging centralizado
-├── agente-shopee/        # Agente de afiliados Shopee
+│   ├── logger.py         # Logging centralizado
+│   └── uploaders/        # Uploaders multi-plataforma
+│       ├── base.py       # Classe base
+│       ├── manager.py    # Gerenciador de uploads
+│       ├── youtube.py    # YouTube uploader
+│       ├── tiktok.py     # TikTok uploader
+│       ├── instagram.py  # Instagram uploader
+│       ├── facebook.py   # Facebook uploader
+│       └── kwai.py       # Kwai uploader
+├── agente_shopee/        # Agente de afiliados Shopee
 │   ├── agent.py          # Orquestração do agente
 │   ├── scraper.py        # Browser automation
 │   └── content.py        # Geração de copy
-├── agente-youtube/       # Agente de canais YouTube
+├── agente_video/         # Agente de vídeo multi-plataforma
 │   ├── agent.py          # Orquestração do agente
 │   ├── research.py       # Análise de nichos
 │   ├── audio.py          # Geração de música IA
 │   ├── thumbnail.py      # Geração de thumbnails
-│   ├── video.py          # Montagem de vídeo
-│   └── uploader.py       # Upload YouTube
+│   └── video.py          # Montagem de vídeo
 └── data/                 # Banco de dados e cache
 ```
 
@@ -113,11 +125,36 @@ OPENAI_API_KEY=sk-...
 OPENAI_MODEL=gpt-4o-mini
 ```
 
-#### YouTube (Upload)
+#### YouTube
 ```env
 YOUTUBE_CLIENT_ID=seu-client-id.apps.googleusercontent.com
 YOUTUBE_CLIENT_SECRET=seu-client-secret
 YOUTUBE_REFRESH_TOKEN=seu-refresh-token
+```
+
+#### TikTok
+```env
+TIKTOK_ACCESS_TOKEN=seu-tiktok-access-token
+TIKTOK_OPEN_ID=seu-tiktok-open-id
+```
+
+#### Instagram
+```env
+INSTAGRAM_ACCESS_TOKEN=seu-instagram-access-token
+INSTAGRAM_ACCOUNT_ID=seu-instagram-account-id
+```
+
+#### Facebook
+```env
+FACEBOOK_ACCESS_TOKEN=seu-facebook-access-token
+FACEBOOK_PAGE_ID=seu-facebook-page-id
+```
+
+#### Kwai
+```env
+KWAI_ACCESS_TOKEN=seu-kwai-access-token
+KWAI_APP_ID=seu-kwai-app-id
+KWAI_APP_SECRET=seu-kwai-app-secret
 ```
 
 #### Shopee (Afiliados)
@@ -171,17 +208,29 @@ DALL_E_API_KEY=sua-key
 
 ---
 
-## 🎬 Agente YouTube
+## 🎬 Agente Video Multi-Plataforma
+
+### Plataformas Suportadas
+
+| Plataforma | Tipo de Conteúdo | Formato |
+|------------|-----------------|---------|
+| YouTube | Longos + Shorts | 16:9, 9:16 |
+| TikTok | Vídeos curtos | 9:16 |
+| Instagram | Reels | 9:16 |
+| Facebook | Vídeos + Reels | 16:9, 9:16 |
+| Kwai | Vídeos curtos | 9:16 |
 
 ### Nichos Suportados
 
-| Nicho | Descrição | Duração |
-|-------|-----------|---------|
-| Lo-fi | Música para estudar | 3h |
-| Meditação | Sons relaxantes | 1h |
-| Oração | Devocional | 30min |
-| Natureza | Sons da natureza | 10h |
-| Ambient | Música espacial | 2h |
+| Nicho | Descrição | Duração | Melhores Plataformas |
+|-------|-----------|---------|---------------------|
+| Lo-fi | Música para estudar | 3h | YouTube, Instagram, TikTok |
+| Meditação | Sons relaxantes | 1h | YouTube, Instagram, Facebook |
+| Oração | Devocional | 30min | YouTube, Facebook, Kwai |
+| Natureza | Sons da natureza | 10h | YouTube |
+| Ambient | Música espacial | 2h | YouTube, TikTok, Instagram |
+| Shorts Lo-fi | Vibes rápidas | 60s | TikTok, Instagram, Kwai |
+| Motivação | Vídeos inspiradores | 30s | TikTok, Instagram, Kwai |
 
 ### Fluxo de Produção
 
@@ -190,15 +239,16 @@ DALL_E_API_KEY=sua-key
 2. Audio → Gera música com Suno/Udio
 3. Thumbnail → Cria imagem com Midjourney/DALL-E
 4. Video → Monta com ffmpeg
-5. Upload → Publica no YouTube
+5. Upload → Publica em TODAS as plataformas configuradas
 ```
 
-### SEO Automático
+### Distribuição Automática
 
-- Títulos otimizados com keywords
-- Descrições ricas em palavras-chave
-- Tags relevantes
-- Thumbnails emocionais
+O sistema publica simultaneamente em todas as plataformas configuradas:
+- Upload paralelo com thread pool
+- Metadados otimizados por plataforma
+- Retry automático em falhas
+- Relatório consolidado de publicação
 
 ---
 
