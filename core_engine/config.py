@@ -42,6 +42,7 @@ class Config:
     STABILITY_API_KEY = os.getenv("STABILITY_API_KEY", "")
     
     # YouTube
+    YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY", "")  # Para pesquisa de dados publicos
     YOUTUBE_CLIENT_ID = os.getenv("YOUTUBE_CLIENT_ID", "")
     YOUTUBE_CLIENT_SECRET = os.getenv("YOUTUBE_CLIENT_SECRET", "")
     YOUTUBE_REFRESH_TOKEN = os.getenv("YOUTUBE_REFRESH_TOKEN", "")
