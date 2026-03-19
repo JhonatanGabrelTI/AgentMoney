@@ -1,0 +1,70 @@
+# ============================================================
+# AGENTMONEY - GITIGNORE
+# ============================================================
+
+# Ambiente
+.env
+.env.local
+.env.production
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Distribuição
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Logs
+logs/*.log
+logs/*.json
+*.log
+
+# Dados sensíveis
+data/*.json
+data/*.csv
+data/*.db
+!data/.gitkeep
+
+# Assets gerados (opcional - remover se quiser versionar)
+assets/audio/*.mp3
+assets/audio/*.wav
+assets/video/*.mp4
+assets/thumbnails/*.png
+assets/thumbnails/*.jpg
+
+# Playwright
+playwright/.cache/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testes
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temp
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini

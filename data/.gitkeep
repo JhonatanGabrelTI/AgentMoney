@@ -1,0 +1,4 @@
+﻿# AgentMoney Data Directory
+*.db
+*.json
+*.csv
